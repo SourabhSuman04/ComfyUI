@@ -4,7 +4,10 @@ import os
 import platform
 import re
 
-import comfy_aimdo.storage
+try:
+    import comfy_aimdo.storage
+except (ImportError, AttributeError):
+    comfy_aimdo = None
 from comfy.cli_args import args
 
 
@@ -76,7 +79,9 @@ def fast_storage(path):
             return None
         return _linux_fast_storage(device)
     if system == "Windows":
-        return comfy_aimdo.storage.fast_disk(path)
+        if comfy_aimdo is not None and hasattr(comfy_aimdo, "storage"):
+            return comfy_aimdo.storage.fast_disk(path)
+        return False
     return None
 
 
